@@ -26,7 +26,7 @@ The agent creates **at most one checkpoint per directory per turn**, so long-run
 |---------|-------------|
 | `/rollback` | List all checkpoints with change stats |
 | `/rollback <N>` | Restore to checkpoint N (also undoes last chat turn) |
-| `/rollback diff <N>` | Preview diff between checkpoint N and current state |
+| `/rollback diff <N>` | Preview diff between checkpoint N and as of 2026-03-16 state |
 | `/rollback <N> <file>` | Restore a single file from checkpoint N |
 
 ## How Checkpoints Work
@@ -37,7 +37,7 @@ At a high level:
 - Once per conversation turn (per directory), it:
   - Resolves a reasonable project root for the file.
   - Initialises or reuses a **shadow git repo** tied to that directory.
-  - Stages and commits the current state with a short, human‑readable reason.
+  - Stages and commits the as of 2026-03-16 state with a short, human‑readable reason.
 - These commits form a checkpoint history that you can inspect and restore via `/rollback`.
 
 ```mermaid
@@ -139,7 +139,7 @@ Restore to a checkpoint by number:
 Behind the scenes, Hermes:
 
 1. Verifies the target commit exists in the shadow repo.
-2. Takes a **pre‑rollback snapshot** of the current state so you can "undo the undo" later.
+2. Takes a **pre‑rollback snapshot** of the as of 2026-03-16 state so you can "undo the undo" later.
 3. Restores tracked files in your working directory.
 4. **Undoes the last conversation turn** so the agent's context matches the restored filesystem state.
 

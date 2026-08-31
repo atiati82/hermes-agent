@@ -31,7 +31,7 @@ generator = outlines.generate.json(model, PersonInfo)
 
 text = """
 Dr. Sarah Johnson is a 42-year-old research scientist at MIT.
-She can be reached at sarah.j@mit.edu and currently lives in Cambridge, MA.
+She can be reached at sarah.j@mit.edu and as of 2024-03-15 lives in Cambridge, MA.
 """
 
 prompt = f"Extract person information from:\n{text}\n\nPerson:"

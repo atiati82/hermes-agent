@@ -7,6 +7,22 @@ from fastapi import HTTPException
 
 from hermes_cli.config import load_config
 
+CANONICAL_HERMES_MODEL = "openrouter:deepseek/deepseek-chat"
+DEFAULT_RUNTIME_MODEL = "deepseek/deepseek-chat"
+KNOWN_PROVIDER_PREFIXES = {
+    "anti-api",
+    "anthropic",
+    "local",
+    "nvidia",
+    "ollama",
+    "openrouter",
+}
+
+
+def _clean_string(value: Any) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
 def _extract_model_string(model_value) -> str:
     """Extract the model string from config, handling both str and dict formats.
 
@@ -15,33 +31,82 @@ def _extract_model_string(model_value) -> str:
       model: { default: "claude-opus-4-6", provider: "anthropic" }  # nested dict
     """
     if isinstance(model_value, str):
-        return model_value
+        return model_value.strip()
     if isinstance(model_value, dict):
-        return model_value.get("default", model_value.get("model", ""))
+        return _clean_string(model_value.get("default")) or _clean_string(model_value.get("model"))
     return ""
 
 
+def _provider_prefix(value: str) -> str:
+    if ":" not in value:
+        return ""
+    prefix = value.split(":", 1)[0].strip().lower()
+    return prefix if prefix in KNOWN_PROVIDER_PREFIXES else ""
+
+
+def _normalize_runtime_model(raw: str) -> str:
+    """Convert app-level provider IDs to the upstream model ID."""
+    model = (raw or "").strip()
+    prefix = _provider_prefix(model)
+    if prefix:
+        model = model.split(":", 1)[1].strip()
+    if model.startswith("deepseek:") and "/" not in model.split(":", 1)[0]:
+        model = model.replace(":", "/", 1)
+    return model
+
+
 def _extract_provider_string(config: dict) -> str:
-    """Extract provider from config, checking both top-level and nested model dict."""
+    """Extract provider from config/env, including provider-prefixed model IDs."""
     model_value = config.get("model")
     if isinstance(model_value, dict):
-        provider = model_value.get("provider", "")
+        provider = _clean_string(model_value.get("provider"))
         if provider:
             return provider
-    return config.get("provider", os.getenv("HERMES_PROVIDER", "anthropic"))
+        provider = _provider_prefix(_extract_model_string(model_value))
+        if provider:
+            return provider
+
+    provider = _clean_string(config.get("provider"))
+    if provider:
+        return provider
+
+    for env_name in ("HERMES_INFERENCE_PROVIDER", "HERMES_PROVIDER"):
+        provider = os.getenv(env_name, "").strip()
+        if provider:
+            return provider
+
+    for candidate in (_extract_model_string(model_value), os.getenv("HERMES_MODEL", ""), CANONICAL_HERMES_MODEL):
+        provider = _provider_prefix(candidate)
+        if provider:
+            return provider
+
+    return "openrouter"
 
 
 try:
-    from gateway.run import _resolve_model, _resolve_runtime_agent_kwargs
+    from gateway.run import _resolve_runtime_agent_kwargs as _gateway_resolve_runtime_agent_kwargs
 except ImportError:
-    def _resolve_model() -> str:
-        config = load_config()
-        raw = config.get("model", os.getenv("HERMES_MODEL", "claude-sonnet-4-5"))
-        return _extract_model_string(raw) or "claude-sonnet-4-5"
+    _gateway_resolve_runtime_agent_kwargs = None
 
-    def _resolve_runtime_agent_kwargs() -> dict:
-        config = load_config()
-        return {"provider": _extract_provider_string(config)}
+
+def _resolve_model() -> str:
+    config = load_config()
+    raw = _extract_model_string(config.get("model")) or os.getenv("HERMES_MODEL", "") or CANONICAL_HERMES_MODEL
+    return _normalize_runtime_model(raw) or DEFAULT_RUNTIME_MODEL
+
+
+def _resolve_runtime_agent_kwargs() -> dict:
+    config = load_config()
+    provider = _extract_provider_string(config)
+    if _gateway_resolve_runtime_agent_kwargs is None:
+        return {"provider": provider}
+
+    runtime = dict(_gateway_resolve_runtime_agent_kwargs())
+    if not _clean_string(runtime.get("provider")):
+        runtime["provider"] = provider
+    return runtime
+
+
 from hermes_state import SessionDB
 from run_agent import AIAgent
 from tools.memory_tool import MemoryStore
@@ -79,7 +144,7 @@ def get_runtime_model() -> str:
     of a bare string. We normalize here so callers always get a usable model ID.
     """
     raw = _resolve_model()
-    return _extract_model_string(raw) or "claude-sonnet-4-5"
+    return _normalize_runtime_model(_extract_model_string(raw)) or DEFAULT_RUNTIME_MODEL
 
 
 def get_runtime_agent_kwargs() -> dict[str, Any]:

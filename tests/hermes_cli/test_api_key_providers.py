@@ -46,6 +46,7 @@ class TestProviderRegistry:
         ("minimax-cn", "MiniMax (China)", "api_key"),
         ("ai-gateway", "AI Gateway", "api_key"),
         ("kilocode", "Kilo Code", "api_key"),
+        ("nvidia", "NVIDIA NIM", "api_key"),
     ])
     def test_provider_registered(self, provider_id, name, auth_type):
         assert provider_id in PROVIDER_REGISTRY
@@ -100,6 +101,11 @@ class TestProviderRegistry:
         assert pconfig.api_key_env_vars == ("HF_TOKEN",)
         assert pconfig.base_url_env_var == "HF_BASE_URL"
 
+    def test_nvidia_env_vars(self):
+        pconfig = PROVIDER_REGISTRY["nvidia"]
+        assert pconfig.api_key_env_vars == ("NVIDIA_API_KEY",)
+        assert pconfig.base_url_env_var == "NVIDIA_BASE_URL"
+
     def test_base_urls(self):
         assert PROVIDER_REGISTRY["copilot"].inference_base_url == "https://api.githubcopilot.com"
         assert PROVIDER_REGISTRY["copilot-acp"].inference_base_url == "acp://copilot"
@@ -110,6 +116,7 @@ class TestProviderRegistry:
         assert PROVIDER_REGISTRY["ai-gateway"].inference_base_url == "https://ai-gateway.vercel.sh/v1"
         assert PROVIDER_REGISTRY["kilocode"].inference_base_url == "https://api.kilo.ai/api/gateway"
         assert PROVIDER_REGISTRY["huggingface"].inference_base_url == "https://router.huggingface.co/v1"
+        assert PROVIDER_REGISTRY["nvidia"].inference_base_url == "https://integrate.api.nvidia.com/v1"
 
     def test_oauth_providers_unchanged(self):
         """Ensure we didn't break the existing OAuth providers."""
@@ -130,6 +137,7 @@ PROVIDER_ENV_VARS = (
     "KIMI_API_KEY", "KIMI_BASE_URL", "MINIMAX_API_KEY", "MINIMAX_CN_API_KEY",
     "AI_GATEWAY_API_KEY", "AI_GATEWAY_BASE_URL",
     "KILOCODE_API_KEY", "KILOCODE_BASE_URL",
+    "NVIDIA_API_KEY", "NVIDIA_BASE_URL",
     "DASHSCOPE_API_KEY", "OPENCODE_ZEN_API_KEY", "OPENCODE_GO_API_KEY",
     "NOUS_API_KEY", "GITHUB_TOKEN", "GH_TOKEN",
     "OPENAI_BASE_URL", "HERMES_COPILOT_ACP_COMMAND", "COPILOT_CLI_PATH",
@@ -219,6 +227,9 @@ class TestResolveProvider:
     def test_alias_hf(self):
         assert resolve_provider("hf") == "huggingface"
 
+    def test_explicit_nvidia(self):
+        assert resolve_provider("nvidia") == "nvidia"
+
     def test_alias_hugging_face(self):
         assert resolve_provider("hugging-face") == "huggingface"
 
@@ -264,6 +275,10 @@ class TestResolveProvider:
     def test_auto_detects_hf_token(self, monkeypatch):
         monkeypatch.setenv("HF_TOKEN", "hf_test_token")
         assert resolve_provider("auto") == "huggingface"
+
+    def test_auto_detects_nvidia_key(self, monkeypatch):
+        monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test-token")
+        assert resolve_provider("auto") == "nvidia"
 
     def test_openrouter_takes_priority_over_glm(self, monkeypatch):
         """OpenRouter API key should win over GLM in auto-detection."""
@@ -379,6 +394,14 @@ class TestResolveApiKeyProviderCredentials:
         assert creds["api_key"] == "gho_cli_secret"
         assert creds["base_url"] == "https://api.githubcopilot.com"
         assert creds["source"] == "gh auth token"
+
+    def test_resolve_nvidia_with_key(self, monkeypatch):
+        monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-secret-key")
+        creds = resolve_api_key_provider_credentials("nvidia")
+        assert creds["provider"] == "nvidia"
+        assert creds["api_key"] == "nvapi-secret-key"
+        assert creds["base_url"] == "https://integrate.api.nvidia.com/v1"
+        assert creds["source"] == "NVIDIA_API_KEY"
 
     def test_try_gh_cli_token_uses_homebrew_path_when_not_on_path(self, monkeypatch):
         monkeypatch.setattr("hermes_cli.copilot_auth.shutil.which", lambda command: None)

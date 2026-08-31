@@ -12,8 +12,21 @@ import os
 logger = logging.getLogger(__name__)
 
 DEFAULT_CODEX_MODELS: List[str] = [
-    "gpt-5.4-mini",
-    "gpt-5.4",
+    # gpt-5.6-sol/terra/luna added 2026-08-31 — current GPT-5.6 generation
+    # (GA since 2026-07-09). gpt-5.4/gpt-5.4-mini removed the same day: both
+    # retire from Codex on 2026-08-31T19:00:00Z (OpenAI's own migration
+    # guidance: replace gpt-5.4 with gpt-5.6-terra, gpt-5.4-mini with
+    # gpt-5.6-luna — confirmed against the `upgrade` field on each retiring
+    # entry in ~/.codex/models_cache.json). Keeping them here would surface a
+    # dead slug that 400s on selection, same class of bug this list has
+    # already had to fix once for the 5.1/5.2 generation below. See the
+    # equivalent, more thoroughly-commented fix in
+    # .hermes/hermes-agent/hermes_cli/codex_models.py (this file has drifted
+    # from that copy in other ways too — out of scope for this fix, flagged
+    # separately for the operator).
+    "gpt-5.6-sol",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
     "gpt-5.3-codex",
     "gpt-5.2-codex",
     "gpt-5.1-codex-max",
@@ -21,10 +34,13 @@ DEFAULT_CODEX_MODELS: List[str] = [
 ]
 
 _FORWARD_COMPAT_TEMPLATE_MODELS: List[tuple[str, tuple[str, ...]]] = [
-    ("gpt-5.4-mini", ("gpt-5.3-codex", "gpt-5.2-codex")),
-    ("gpt-5.4", ("gpt-5.3-codex", "gpt-5.2-codex")),
     ("gpt-5.3-codex", ("gpt-5.2-codex",)),
     ("gpt-5.3-codex-spark", ("gpt-5.3-codex", "gpt-5.2-codex")),
+    # gpt-5.4 / gpt-5.4-mini template chains removed 2026-08-31 — both
+    # templates retire from Codex the same day (see DEFAULT_CODEX_MODELS
+    # note above), so synthesizing forward-compat entries off them would
+    # surface a dead slug. gpt-5.6-sol/terra/luna need no synthetic chain:
+    # they're GA and already returned by live discovery / the local cache.
 ]
 
 

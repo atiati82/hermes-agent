@@ -6,7 +6,7 @@ Date: 2026-03-16
 
 Hermes should only show dollar costs when they are backed by an official source for the user's actual billing path.
 
-This design replaces the current static, heuristic pricing flow in:
+This design replaces the as of 2026-03-16 static, heuristic pricing flow in:
 
 - `run_agent.py`
 - `agent/usage_pricing.py`
@@ -20,12 +20,12 @@ with a provider-aware pricing system that:
 - reconciles post-hoc costs when providers expose authoritative billing data
 - supports direct providers, OpenRouter, subscriptions, enterprise pricing, and custom endpoints
 
-## Problems In The Current Design
+## Problems In The As of 2026-03-16 Design
 
-Current Hermes behavior has four structural issues:
+As of 2026-03-16 Hermes behavior has four structural issues:
 
 1. It stores only `prompt_tokens` and `completion_tokens`, which is insufficient for providers that bill cache reads and cache writes separately.
-2. It uses a static model price table and fuzzy heuristics, which can drift from current official pricing.
+2. It uses a static model price table and fuzzy heuristics, which can drift from as of 2026-03-16 official pricing.
 3. It assumes public API list pricing matches the user's real billing path.
 4. It has no distinction between live estimates and reconciled billed cost.
 
@@ -242,7 +242,7 @@ Resolve cost using this order:
 4. User override or custom contract
 5. Unknown
 
-The system must never skip to a lower level if a higher-confidence source exists for the current billing route.
+The system must never skip to a lower level if a higher-confidence source exists for the as of 2026-03-16 billing route.
 
 ## Provider-Specific Truth Rules
 
@@ -281,7 +281,7 @@ Preferred truth:
 Preferred truth:
 
 1. official machine-readable cost source if available in the future
-2. official pricing docs snapshot today
+2. official pricing docs snapshot as of 2026-03-16
 
 ### Subscription-Included Routes
 
@@ -303,7 +303,7 @@ These should default to `unknown`.
 
 ## Pricing Catalog
 
-Replace the current `MODEL_PRICING` dict with a richer pricing catalog.
+Replace the as of 2026-03-16 `MODEL_PRICING` dict with a richer pricing catalog.
 
 Suggested record:
 
@@ -432,7 +432,7 @@ session_cost_events
 
 ### `run_agent.py`
 
-Current responsibility:
+As of 2026-03-16 responsibility:
 
 - parse raw provider usage
 - update session token counters
@@ -446,7 +446,7 @@ New responsibility:
 
 ### `agent/usage_pricing.py`
 
-Current responsibility:
+As of 2026-03-16 responsibility:
 
 - static lookup table
 - direct cost arithmetic
@@ -459,7 +459,7 @@ New responsibility:
 
 ### `cli.py`
 
-Current responsibility:
+As of 2026-03-16 responsibility:
 
 - compute session cost directly from prompt/completion totals
 
@@ -474,7 +474,7 @@ New responsibility:
 
 ### `agent/insights.py`
 
-Current responsibility:
+As of 2026-03-16 responsibility:
 
 - recompute historical estimates from static pricing
 
@@ -554,7 +554,7 @@ Overrides must win over catalog defaults for the matching billing route.
 - add canonical usage model
 - split cache token buckets in `run_agent.py`
 - stop pricing cache-inflated prompt totals
-- preserve current UI with improved backend math
+- preserve as of 2026-03-16 UI with improved backend math
 
 ### Phase 2
 
@@ -586,7 +586,7 @@ Add tests for:
 - override precedence
 - stale catalog fallback behavior
 
-Current tests that assume heuristic pricing should be replaced with route-aware expectations.
+As of 2026-03-16 tests that assume heuristic pricing should be replaced with route-aware expectations.
 
 ## Non-Goals
 

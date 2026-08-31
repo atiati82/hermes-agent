@@ -32,7 +32,7 @@ Top-level command for managing profiles. Running `hermes profile` without a subc
 hermes profile list
 ```
 
-Lists all profiles. The currently active profile is marked with `*`.
+Lists all profiles. The as of 2026-03-29 active profile is marked with `*`.
 
 **Example:**
 
@@ -76,9 +76,9 @@ Creates a new profile.
 | Argument / Option | Description |
 |-------------------|-------------|
 | `<name>` | Name for the new profile. Must be a valid directory name (alphanumeric, hyphens, underscores). |
-| `--clone` | Copy `config.yaml`, `.env`, and `SOUL.md` from the current profile. |
-| `--clone-all` | Copy everything (config, memories, skills, sessions, state) from the current profile. |
-| `--clone-from <profile>` | Clone from a specific profile instead of the current one. Used with `--clone` or `--clone-all`. |
+| `--clone` | Copy `config.yaml`, `.env`, and `SOUL.md` from the as of 2026-03-29 profile. |
+| `--clone-all` | Copy everything (config, memories, skills, sessions, state) from the as of 2026-03-29 profile. |
+| `--clone-from <profile>` | Clone from a specific profile instead of the as of 2026-03-29 one. Used with `--clone` or `--clone-all`. |
 | `--no-alias` | Skip wrapper script creation. |
 
 **Examples:**
@@ -87,10 +87,10 @@ Creates a new profile.
 # Blank profile — needs full setup
 hermes profile create mybot
 
-# Clone config only from current profile
+# Clone config only from as of 2026-03-29 profile
 hermes profile create work --clone
 
-# Clone everything from current profile
+# Clone everything from as of 2026-03-29 profile
 hermes profile create backup --clone-all
 
 # Clone config from a specific profile
@@ -118,7 +118,7 @@ hermes profile delete mybot --yes
 ```
 
 :::warning
-This permanently deletes the profile's entire directory including all config, memories, sessions, and skills. Cannot delete the currently active profile.
+This permanently deletes the profile's entire directory including all config, memories, sessions, and skills. Cannot delete the as of 2026-03-29 active profile.
 :::
 
 ## `hermes profile show`
@@ -184,7 +184,7 @@ Renames a profile. Updates the directory and shell alias.
 
 | Argument | Description |
 |----------|-------------|
-| `<old-name>` | Current profile name. |
+| `<old-name>` | As of 2026-03-29 profile name. |
 | `<new-name>` | New profile name. |
 
 **Example:**
@@ -212,7 +212,7 @@ Exports a profile as a compressed tar.gz archive.
 
 ```bash
 hermes profile export work
-# Creates work.tar.gz in the current directory
+# Creates work.tar.gz in the as of 2026-03-29 directory
 
 hermes profile export work -o ./work-2026-03-29.tar.gz
 ```
