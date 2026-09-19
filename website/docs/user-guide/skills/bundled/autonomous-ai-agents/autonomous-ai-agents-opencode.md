@@ -1,26 +1,27 @@
 ---
-title: "Opencode"
+title: "Opencode — Delegate coding to OpenCode CLI (features, PR review)"
 sidebar_label: "Opencode"
-description: "Delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions"
+description: "Delegate coding to OpenCode CLI (features, PR review)"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # Opencode
 
-Delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions. Requires the opencode CLI installed and authenticated.
+Delegate coding to OpenCode CLI (features, PR review).
 
 ## Skill metadata
 
 | | |
 |---|---|
 | Source | Bundled (installed by default) |
-| Path | `skills/autonomous-ai-agents/opencode` |
+| Path | `skills/autonomous-ai-agents\opencode` |
 | Version | `1.2.0` |
 | Author | Hermes Agent |
 | License | MIT |
+| Platforms | linux, macos, windows |
 | Tags | `Coding-Agent`, `OpenCode`, `Autonomous`, `Refactoring`, `Code-Review` |
-| Related skills | [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code), [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex), [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
+| Related skills | [`claude-code`](./autonomous-ai-agents-claude-code.md), [`codex`](./autonomous-ai-agents-codex.md), [`hermes-agent`](./autonomous-ai-agents-hermes-agent.md) |
 
 ## Reference: full SKILL.md
 

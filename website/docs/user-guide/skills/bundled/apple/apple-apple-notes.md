@@ -1,27 +1,27 @@
 ---
-title: "Apple Notes — Manage Apple Notes via the memo CLI on macOS (create, view, search, edit)"
+title: "Apple Notes — Manage Apple Notes via memo CLI: create, search, edit"
 sidebar_label: "Apple Notes"
-description: "Manage Apple Notes via the memo CLI on macOS (create, view, search, edit)"
+description: "Manage Apple Notes via memo CLI: create, search, edit"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # Apple Notes
 
-Manage Apple Notes via the memo CLI on macOS (create, view, search, edit).
+Manage Apple Notes via memo CLI: create, search, edit.
 
 ## Skill metadata
 
 | | |
 |---|---|
 | Source | Bundled (installed by default) |
-| Path | `skills/apple/apple-notes` |
-| Version | `1.0.0` |
+| Path | `skills/apple\apple-notes` |
+| Version | `1.0.1` |
 | Author | Hermes Agent |
 | License | MIT |
 | Platforms | macos |
 | Tags | `Notes`, `Apple`, `macOS`, `note-taking` |
-| Related skills | [`obsidian`](/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian) |
+| Related skills | [`obsidian`](../note-taking/note-taking-obsidian.md) |
 
 ## Reference: full SKILL.md
 
@@ -65,9 +65,13 @@ memo notes -s "query"             # Search notes (fuzzy)
 ### Create Notes
 
 ```bash
-memo notes -a                     # Interactive editor
-memo notes -a "Note Title"        # Quick add with title
+memo notes -a                     # Add a note (opens your $EDITOR)
+memo notes -a -f "Folder Name"    # Add a note into a specific folder
 ```
+
+`-a`/`--add` is a bare flag — it opens your `$EDITOR` to compose the note; it does
+not take a title argument. Use `-f/--folder` to target a folder. Set `$EDITOR`
+first (e.g. `export EDITOR=vim`).
 
 ### Edit Notes
 

@@ -1,24 +1,27 @@
 ---
-title: "P5Js — Production pipeline for interactive and generative visual art using p5"
+title: "P5Js — p5.js sketches: gen art, shaders, interactive, 3D"
 sidebar_label: "P5Js"
-description: "Production pipeline for interactive and generative visual art using p5"
+description: "p5.js sketches: gen art, shaders, interactive, 3D"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # P5Js
 
-Production pipeline for interactive and generative visual art using p5.js. Creates browser-based sketches, generative art, data visualizations, interactive experiences, 3D scenes, audio-reactive visuals, and motion graphics — exported as HTML, PNG, GIF, MP4, or SVG. Covers: 2D/3D rendering, noise and particle systems, flow fields, shaders (GLSL), pixel manipulation, kinetic typography, WebGL scenes, audio analysis, mouse/keyboard interaction, and headless high-res export. Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project.
+p5.js sketches: gen art, shaders, interactive, 3D.
 
 ## Skill metadata
 
 | | |
 |---|---|
 | Source | Bundled (installed by default) |
-| Path | `skills/creative/p5js` |
+| Path | `skills/creative\p5js` |
 | Version | `1.0.0` |
+| Author | SHL0MS, Hermes Agent |
+| License | MIT |
+| Platforms | linux, macos, windows |
 | Tags | `creative-coding`, `generative-art`, `p5js`, `canvas`, `interactive`, `visualization`, `webgl`, `shaders`, `animation` |
-| Related skills | [`ascii-video`](/docs/user-guide/skills/bundled/creative/creative-ascii-video), [`manim-video`](/docs/user-guide/skills/bundled/creative/creative-manim-video), [`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw) |
+| Related skills | [`ascii-video`](./creative-ascii-video.md), [`manim-video`](./creative-manim-video.md), [`excalidraw`](../../optional/creative/creative-excalidraw.md) |
 
 ## Reference: full SKILL.md
 
@@ -27,6 +30,14 @@ The following is the complete skill definition that Hermes loads when this skill
 :::
 
 # p5.js Production Pipeline
+
+## When to use
+
+Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project.
+
+## What's inside
+
+Production pipeline for interactive and generative visual art using p5.js. Creates browser-based sketches, generative art, data visualizations, interactive experiences, 3D scenes, audio-reactive visuals, and motion graphics — exported as HTML, PNG, GIF, MP4, or SVG. Covers: 2D/3D rendering, noise and particle systems, flow fields, shaders (GLSL), pixel manipulation, kinetic typography, WebGL scenes, audio analysis, mouse/keyboard interaction, and headless high-res export.
 
 ## Creative Standard
 
@@ -263,7 +274,7 @@ Key implementation patterns:
 ### Step 4: Preview & Iterate
 
 - Open HTML file directly in browser — no server needed for basic sketches
-- For `loadImage()`/`loadFont()` from local files: use `scripts/serve.sh` or `python3 -m http.server`
+- For `loadImage()`/`loadFont()` from local files: use `scripts/serve.sh` or `python -m http.server`
 - Chrome DevTools Performance tab to verify 60fps
 - Test at target export resolution, not just the window size
 - Adjust parameters until the visual matches the concept from Step 1
@@ -495,7 +506,7 @@ When building p5.js sketches:
 
 1. **Write the HTML file** — single self-contained file, all code inline
 2. **Open in browser** — `open sketch.html` (macOS) or `xdg-open sketch.html` (Linux)
-3. **Local assets** (fonts, images) require a server: `python3 -m http.server 8080` in the project directory, then open `http://localhost:8080/sketch.html`
+3. **Local assets** (fonts, images) require a server: `python -m http.server 8080` in the project directory, then open `http://localhost:8080/sketch.html`
 4. **Export PNG/GIF** — add `keyPressed()` shortcuts as shown above, tell the user which key to press
 5. **Headless export** — `node scripts/export-frames.js sketch.html --frames 300` for automated frame capture (sketch must use `noLoop()` + `_p5Ready`)
 6. **MP4 rendering** — `bash scripts/render.sh sketch.html output.mp4 --duration 30`
