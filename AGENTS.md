@@ -444,3 +444,14 @@ Long-form background lives in `website/docs/developer-guide/` (agent-loop, promp
 context-compression-and-caching, gateway-internals, tools-runtime, plugins/, cron-internals,
 session-storage, ...). Workflow rules (PR/issue/review/salvage process) live in the
 `hermes-agent-dev` skill, not here.
+
+## Plan execution standard (set 2026-09-20)
+
+Substantial or multi-step autonomous work — an exhaustive audit or build, work that has
+previously returned half-done, parallel leaves or pipelines — uses the **`unlazy`** skill:
+write acceptance gates (`GATES.md`, one observable outcome per gate) *before* implementing,
+decompose with its Depth Tree, run only explicitly approved checks, re-verify evidence before
+reporting done. Trigger phrases: `/unlazy`, `$unlazy`, "tree N", "gates", "do not stop until
+it is done". Vendored globally — `~/.claude/skills/unlazy`, `~/.codex/skills/unlazy`, and the
+Antigravity `vendored-skills` plugin — so it applies the same way across Claude Code, Codex,
+and Antigravity, not just one runtime. Source: github.com/Leonxlnx/unlazy.
