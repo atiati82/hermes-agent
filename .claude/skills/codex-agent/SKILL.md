@@ -68,3 +68,37 @@ scripts/dispatch-codex.sh "Why does this overflow?" read-only
   yourself, or say so explicitly in the task.
 - Billed via each account's own ChatGPT plan, not per-token credits, but
   still a real resource — don't fire it in a loop without noticing.
+
+## Dispatches hang silently — check for it (real incident, 2026-08-16)
+
+`codex exec` can wedge: alive in the process table, **0.0% CPU**, producing
+nothing, forever. It emits no error and no notification, so a fire-and-forget
+dispatch that hangs is **completely invisible** unless something looks for it.
+
+One session accumulated **18 hung dispatches**, the oldest running **12h33m**,
+before anyone noticed — the only symptom was the machine feeling slow (load
+average **266**). Six pointed at worktrees deleted hours earlier, so they could
+never have produced anything. The contention also caused real, unrelated
+wall-clock test failures, which cost a full investigation to trace back to load
+rather than a product defect.
+
+**So: after dispatching, and before concluding a dispatch "is still working",
+actually check.** A dispatch is suspect when **both** hold — idle (<=0.5% CPU)
+and old (>=45m) — because a young idle process may simply be waiting on a model
+response, and a busy old one is genuinely working:
+
+```bash
+ps -eo pid,etime,%cpu,args | grep '[c]odex exec'
+```
+
+Kill what is genuinely wedged. A hung dispatch is not a Codex bug to route
+around — it is a normal failure mode of this execution path, and the only
+defense is looking.
+
+## Concurrency — running more than one Codex task at once
+
+`dispatch-codex.sh` derives its working root from **its own on-disk location**,
+so two Codex tasks invoked against the *same copy* of the script share one
+working tree and **will step on each other's edits**. Run concurrent dispatches
+from separate checkouts/worktrees, one per task, and review each diff before
+merging. Do not leave an abandoned worktree behind after merging.
