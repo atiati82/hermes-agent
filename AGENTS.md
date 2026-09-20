@@ -455,3 +455,14 @@ reporting done. Trigger phrases: `/unlazy`, `$unlazy`, "tree N", "gates", "do no
 it is done". Vendored globally — `~/.claude/skills/unlazy`, `~/.codex/skills/unlazy`, and the
 Antigravity `vendored-skills` plugin — so it applies the same way across Claude Code, Codex,
 and Antigravity, not just one runtime. Source: github.com/Leonxlnx/unlazy.
+
+## Audit-fix discipline standard (set 2026-09-20)
+
+Fixing anything found during an audit — a bug, a drift, a stale reference — follows
+**Karpathy guidelines** (`andrej-karpathy-skills:karpathy-guidelines`, plugin):
+state assumptions before coding rather than guessing silently; minimum code that solves the
+finding, no speculative abstractions or unrequested flexibility; surgical changes only — touch
+what the finding requires, never drive-by-refactor adjacent code, and only remove dead code
+your own change orphaned; define a verifiable success criterion and loop until it's met rather
+than reporting "should be fixed now". This governs *how* a fix is written; it does not relax
+this repo's own evidence-before-done standard for *whether the fix is verified*.
