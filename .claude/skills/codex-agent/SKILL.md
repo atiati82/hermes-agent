@@ -33,8 +33,8 @@ risky work gets high effort. Effort is escalated by failed verification, never b
 - `andreas@migotz.de` — `~/.codex-andreas`
 - `atiworld@icloud.com` — `~/.codex` (ChatGPT Team)
 
-`scripts/dispatch-codex.sh` randomly picks one per dispatch to spread usage
-across both quotas, and automatically retries on the other account if the
+`scripts/dispatch-codex.sh` picks the account with more quota headroom, using a
+random choice only when headroom is unknown or tied. It retries on the other account if the
 first hits a quota/rate-limit/auth error. Force one side with
 `CODEX_ACCOUNT=andreas|atiworld`. Manual switch for an interactive `codex`
 session: `~/scripts/codex-account.sh <andreas|atiworld> ...`.
@@ -104,7 +104,9 @@ defense is looking.
 
 ## Concurrency — running more than one Codex task at once
 
-`dispatch-codex.sh` derives its working root from **its own on-disk location**,
+The shim changes to its own repo root before calling `ai-dispatch`; the dispatcher
+derives its working root from the **caller's current directory** (git top-level,
+or `pwd` outside Git),
 so two Codex tasks invoked against the *same copy* of the script share one
 working tree and **will step on each other's edits**. Run concurrent dispatches
 from separate checkouts/worktrees, one per task, and review each diff before

@@ -6,6 +6,7 @@
 # Usage (unchanged): scripts/dispatch-codex.sh "<task description>" [sandbox-mode]
 # Force one account (unchanged): CODEX_ACCOUNT=atiworld|andreas
 set -euo pipefail
+cd "$(dirname "$0")/.."
 case "${CODEX_ACCOUNT:-}" in
   atiworld) lane=codex-a ;;
   andreas)  lane=codex-b ;;
