@@ -466,3 +466,13 @@ what the finding requires, never drive-by-refactor adjacent code, and only remov
 your own change orphaned; define a verifiable success criterion and loop until it's met rather
 than reporting "should be fixed now". This governs *how* a fix is written; it does not relax
 this repo's own evidence-before-done standard for *whether the fix is verified*.
+
+<!-- model-policy-pointer:v1 -->
+## Model selection (shared policy)
+
+Cross-provider model selection is owned by the shared `ai-dispatch` policy
+(`~/bin/config/model-policy.json`, repo `atiati82/mac-bin-helpers`; see the decision for any task with
+`ai-dispatch route "<task>"`). This repository defines constraints, not global provider/model defaults.
+Exact model IDs may be pinned here only when they form part of a tested runtime/preflight contract, and each
+such pin should state why it exists and how it is qualified.
+<!-- /model-policy-pointer -->

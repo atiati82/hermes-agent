@@ -1,9 +1,9 @@
 ---
 name: codex-agent
-description: Dispatch a coding task to Codex CLI (OpenAI GPT-5.6-Luna, ChatGPT-authenticated, load-balanced across 2 accounts), scoped to this repo. Usage: /codex-agent <task> [sandbox-mode]
+description: Dispatch a coding task to Codex CLI (ChatGPT-authenticated, load-balanced across 2 accounts; the shared model policy picks model and effort), scoped to this repo. Usage: /codex-agent <task> [sandbox-mode]
 ---
 
-# Codex Agent — GPT-5.6-Luna via Codex CLI
+# Codex Agent — Codex CLI, model chosen by the shared policy
 
 ## Purpose
 
@@ -13,13 +13,20 @@ planning, file editing), authenticated via ChatGPT accounts rather than
 per-token API credits. Ported 2026-09-19 from the setup proven in
 `~/localhost` and `~/orgs/atiati82/AskBack`.
 
-## Model policy (operator instruction, 2026-09-18/19)
+## Model policy (shared — not restated here)
 
-| Model | Role | Notes |
-| --- | --- | --- |
-| `gpt-5.6-luna` | **Default, everywhere, at `xhigh` reasoning effort.** | Cheapest/fastest GPT-5.6 tier — the standard, token-efficient choice for support/coding work. |
-| `gpt-5.6-sol` | On request only — `CODEX_MODEL=gpt-5.6-sol`. | Never a silent default; asking for it explicitly is the authorization. |
-| `gpt-5.6-terra` | Escalation, for a task that genuinely needs more than Luna. | `CODEX_MODEL=gpt-5.6-terra`. |
+The model and reasoning effort come from ONE tracked policy, `~/bin/config/model-policy.json`
+(repo `atiati82/mac-bin-helpers`), read by `~/bin/ai-dispatch`. `scripts/dispatch-codex.sh` calls the
+dispatcher's `codex` lane, which classifies the task and runs the approved role: small mechanical work
+gets a small model at low effort, ordinary coding a stronger model at medium effort, and only hard or
+risky work gets high effort. Effort is escalated by failed verification, never by default.
+
+- See the decision without running anything: `~/bin/ai-dispatch route "<task>"`
+- Force a role instead of classifying: `~/bin/ai-dispatch coding-deep "<task>"` (also `mechanical`,
+  `routine`, `coding`, `frontier`), or `~/bin/ai-dispatch smart "<task>" --verify "<cmd>"` to escalate one
+  step at a time only when the verification command fails.
+- `CODEX_MODEL` / `CODEX_REASONING_EFFORT` still override for one run; asking for it explicitly is the
+  authorization. Do not hardcode model names in this repo unless they are part of a tested runtime contract.
 
 ## Two accounts, load-balanced (operator instruction, 2026-09-19)
 
@@ -59,8 +66,8 @@ scripts/dispatch-codex.sh "Why does this overflow?" read-only
 
 - First argument: the task, in plain English.
 - Second argument (optional): sandbox mode. Default `workspace-write`.
-- `CODEX_REASONING_EFFORT=max scripts/dispatch-codex.sh ...` for a genuinely
-  hard problem.
+- For a genuinely hard problem use `~/bin/ai-dispatch coding-deep "<task>"` (or `frontier`), not a
+  blanket effort override.
 
 ## Notes
 
