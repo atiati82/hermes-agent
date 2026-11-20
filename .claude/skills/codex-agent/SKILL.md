@@ -1,6 +1,9 @@
 ---
 name: codex-agent
-description: Dispatch a coding task to Codex CLI (ChatGPT-authenticated, load-balanced across 2 accounts; the shared model policy picks model and effort), scoped to this repo. Usage: /codex-agent <task> [sandbox-mode]
+description: "Dispatch a coding task to Codex CLI (ChatGPT-authenticated, load-balanced across 2 accounts; the shared model policy picks model and effort), scoped to this repo. Usage: /codex-agent TASK [SANDBOX_MODE]"
+metadata:
+  author: atiati82
+  tags: [codex, dispatch, delegation]
 ---
 
 # Codex Agent — Codex CLI, model chosen by the shared policy
@@ -16,7 +19,7 @@ per-token API credits. Ported 2026-09-19 from the setup proven in
 ## Model policy (shared — not restated here)
 
 The model and reasoning effort come from ONE tracked policy, `~/bin/config/model-policy.json`
-(repo `atiati82/mac-bin-helpers`), read by `~/bin/ai-dispatch`. `scripts/dispatch-codex.sh` calls the
+(repo `atiati82/mac-bin-helpers`), read by `~/bin/ai-dispatch`. the repo-root dispatch script (`dispatch-codex.sh`) calls the
 dispatcher's `codex` lane, which classifies the task and runs the approved role: small mechanical work
 gets a small model at low effort, ordinary coding a stronger model at medium effort, and only hard or
 risky work gets high effort. Effort is escalated by failed verification, never by default.
@@ -30,10 +33,10 @@ risky work gets high effort. Effort is escalated by failed verification, never b
 
 ## Two accounts, load-balanced (operator instruction, 2026-09-19)
 
-- `andreas@migotz.de` — `~/.codex-andreas`
-- `atiworld@icloud.com` — `~/.codex` (ChatGPT Team)
+- account `andreas` — `~/.codex-andreas`
+- account `atiworld` — `~/.codex` (ChatGPT Team)
 
-`scripts/dispatch-codex.sh` picks the account with more quota headroom, using a
+the repo-root dispatch script (`dispatch-codex.sh`) picks the account with more quota headroom, using a
 random choice only when headroom is unknown or tied. It retries on the other account if the
 first hits a quota/rate-limit/auth error. Force one side with
 `CODEX_ACCOUNT=andreas|atiworld`. Manual switch for an interactive `codex`
@@ -41,10 +44,10 @@ session: `~/scripts/codex-account.sh <andreas|atiworld> ...`.
 
 ## Behavior
 
-When invoked with `/codex-agent <task> [sandbox-mode]`:
+When invoked with `/codex-agent TASK [SANDBOX_MODE]`:
 
-1. Run `scripts/dispatch-codex.sh "<task>" [sandbox-mode]` from the repo root.
-2. Codex CLI reads this repo's `AGENTS.md` (if present) itself once its
+1. Run `bash "$(git rev-parse --show-toplevel)"/scripts/dispatch-codex.sh "<task>" [sandbox-mode]` from the repo root.
+2. Codex CLI reads this repo's agent-instructions file (if present) itself once its
    working directory is set — no hand-rolled context preamble beyond a
    short discipline reminder.
 3. Defaults to `workspace-write` sandbox. Pass `read-only` for analysis-only,
@@ -56,12 +59,12 @@ When invoked with `/codex-agent <task> [sandbox-mode]`:
 ## Execution
 
 ```bash
-scripts/dispatch-codex.sh "Fix the null pointer in src/foo.ts"
+bash "$(git rev-parse --show-toplevel)"/scripts/dispatch-codex.sh "Fix the null pointer in src/foo.ts"
 ```
 
 ```bash
 # read-only: ask a question, don't touch files
-scripts/dispatch-codex.sh "Why does this overflow?" read-only
+bash "$(git rev-parse --show-toplevel)"/scripts/dispatch-codex.sh "Why does this overflow?" read-only
 ```
 
 - First argument: the task, in plain English.
